@@ -5,8 +5,10 @@
   <title>Pesquisar Dados</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    /* TODO: cole aqui todo o conteúdo do seu CSS */
-    /* Exemplo: */
+    /* === CSS embutido === */
+    /* Importa fonte Inter do Google Fonts */
+    /* (já carregada no link acima, repetido aqui só por segurança) */
+
     body {
       font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f9f9f9;
@@ -16,7 +18,229 @@
       -moz-osx-font-smoothing: grayscale;
       line-height: 1.6;
     }
-    /* e todo o restante do seu CSS */
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #222;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    input, button {
+      font-size: 16px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1.5px solid #ccc;
+      margin-right: 10px;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+      outline-offset: 2px;
+    }
+
+    input::placeholder {
+      color: #aaa;
+      font-style: italic;
+    }
+
+    input:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 6px rgba(0, 123, 255, 0.4);
+      outline: none;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #0056b3;
+    }
+
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+
+    #results {
+      margin-top: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 10px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+      font-weight: 600;
+      user-select: none;
+    }
+
+    tbody tr:nth-child(odd) {
+      background-color: #f9f9f9;
+    }
+
+    tbody tr:hover {
+      background-color: #dbe9ff;
+      transition: background-color 0.3s ease;
+      cursor: default;
+    }
+
+    .sheet-title {
+      font-size: 1.3rem;
+      margin: 25px 0 10px;
+      font-weight: 700;
+      color: #007bff;
+      text-align: left;
+    }
+
+    .no-results, .error-message {
+      margin-top: 20px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .no-results {
+      color: #555;
+    }
+
+    .error-message {
+      color: #d9534f; /* bootstrap red */
+    }
+
+    .no-results::before {
+      content: "ℹ️";
+    }
+
+    .error-message::before {
+      content: "❌";
+    }
+
+    .highlight {
+      background-color: #fff3cd;
+      font-weight: 700;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      color: #007bff;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    .loading::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border: 3.5px solid #007bff;
+      border-top: 3.5px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* === RESPONSIVIDADE PARA CELULAR === */
+    @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+      }
+
+      input, button {
+        width: 100%;
+        margin: 8px 0;
+      }
+
+      button {
+        padding: 14px;
+      }
+
+      #results {
+        margin-top: 20px;
+      }
+
+      /* Tabela rolável horizontalmente e formato lista */
+      table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: 0;
+        box-shadow: none;
+        border-radius: 0;
+      }
+
+      thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none; /* Oculta cabeçalho padrão */
+      }
+
+      tbody tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        padding: 12px 10px;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      }
+
+      tbody tr:hover {
+        background-color: #e6f0ff;
+      }
+
+      tbody tr td {
+        padding-left: 50%;
+        position: relative;
+        border: none;
+        border-bottom: 1px solid #eee;
+        white-space: normal;
+      }
+
+      tbody tr td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        color: #007bff;
+      }
+    }
   </style>
 </head>
 <body>
@@ -29,7 +253,7 @@
   <div id="results"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz7WPUtSITwrMM16C_TlOwXtWr0jNNc6axu2bQ0w3uS2H7sCRBmqkyoHkooiUNJT07K/exec'; // Atualize aqui
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz7WPUtSITwrMM16C_TlOwXtWr0jNNc6axu2bQ0w3uS2H7sCRBmqkyoHkooiUNJT07K/exec'; // Substitua pela sua URL
 
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('searchButton');
