@@ -3,92 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pesquisar Dados</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f5f5f5;
-      padding: 2rem;
-    }
-    input, button {
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-    button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      margin-left: 0.5rem;
-      cursor: pointer;
-    }
-    .resultado {
-      margin-top: 2rem;
-    }
-    .tabela {
-      background: white;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 0.5rem;
-    }
-    th {
-      background-color: #f0f0f0;
-    }
-  </style>
+  <title>Banco de Dados Sérgio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>Pesquisar Banco de Dados Sérgio</h1>
-  <input type="text" id="termo" placeholder="Digite o termo" />
-  <button onclick="pesquisar()">Pesquisar</button>
-  <div class="resultado" id="resultado"></div>
+<body class="bg-gray-100 min-h-screen p-6">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6 text-center text-blue-700">🔍 Pesquisar Banco de Dados Sérgio</h1>
+    
+    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+      <input 
+        id="termo"
+        type="text" 
+        placeholder="Digite o termo de busca..."
+        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+      <button 
+        onclick="pesquisar()"
+        class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition"
+      >
+        Pesquisar
+      </button>
+    </div>
+
+    <div id="resultado" class="space-y-8"></div>
+  </div>
 
   <script>
     async function pesquisar() {
       const termo = document.getElementById("termo").value.trim();
-      if (!termo) return alert("Digite um termo para buscar.");
-
-      const url = `https://script.google.com/macros/s/AKfycbyqs2xyx_rUpp1wKvd0MDpG--mibdAURY6KTj9Y0LlvhbfoxbsikNluv7oY_SmuDzqP/exec?termo=${encodeURIComponent(termo)}`;
       const resultadoDiv = document.getElementById("resultado");
-      resultadoDiv.innerHTML = "Buscando...";
+      resultadoDiv.innerHTML = "";
+
+      if (!termo) {
+        resultadoDiv.innerHTML = `<p class="text-red-500">Digite um termo válido.</p>`;
+        return;
+      }
+
+      resultadoDiv.innerHTML = `<p class="text-gray-600">🔄 Buscando...</p>`;
 
       try {
-        const resposta = await fetch(url);
-        const dados = await resposta.json();
+        const url = `https://script.google.com/macros/s/AKfycbyqs2xyx_rUpp1wKvd0MDpG--mibdAURY6KTj9Y0LlvhbfoxbsikNluv7oY_SmuDzqP/exec?termo=${encodeURIComponent(termo)}`;
+        const res = await fetch(url);
+        const dados = await res.json();
 
         if (dados.error || dados.erro) {
-          resultadoDiv.innerHTML = `<p style="color:red;">Erro: ${dados.error || dados.erro}</p>`;
+          resultadoDiv.innerHTML = `<p class="text-red-500">Erro: ${dados.error || dados.erro}</p>`;
           return;
         }
 
         if (dados.mensagem) {
-          resultadoDiv.innerHTML = `<p>${dados.mensagem}</p>`;
+          resultadoDiv.innerHTML = `<p class="text-gray-700">${dados.mensagem}</p>`;
           return;
         }
 
-        let html = '';
+        let html = "";
         dados.forEach(grupo => {
-          html += `<div class="tabela"><h3>Aba: ${grupo.aba}</h3><table><thead><tr>`;
-          grupo.colunas.forEach(col => {
-            html += `<th>${col}</th>`;
-          });
-          html += `</tr></thead><tbody>`;
-          grupo.resultados.forEach(linha => {
-            html += `<tr>${linha.map(celula => `<td>${celula}</td>`).join('')}</tr>`;
-          });
-          html += `</tbody></table></div>`;
+          html += `
+            <div class="bg-white p-4 rounded-lg shadow">
+              <h2 class="text-xl font-semibold mb-2 text-blue-600">📄 Aba: ${grupo.aba}</h2>
+              <div class="overflow-x-auto">
+                <table class="min-w-full table-auto border border-gray-200 text-sm">
+                  <thead class="bg-gray-100 text-left">
+                    <tr>
+                      ${grupo.colunas.map(col => `<th class="px-4 py-2 border">${col}</th>`).join("")}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${grupo.resultados.map(row => `
+                      <tr class="hover:bg-gray-50">
+                        ${row.map(cell => `<td class="px-4 py-2 border">${cell}</td>`).join("")}
+                      </tr>
+                    `).join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
         });
 
         resultadoDiv.innerHTML = html;
       } catch (err) {
-        resultadoDiv.innerHTML = `<p style="color:red;">Erro ao conectar: ${err.message}</p>`;
+        resultadoDiv.innerHTML = `<p class="text-red-500">Erro ao buscar dados: ${err.message}</p>`;
       }
     }
   </script>
