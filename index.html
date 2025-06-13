@@ -2,176 +2,188 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <title>Pesquisar Dados</title>
+  <title>Pesquisar Banco de Dados Sérgio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    /* === SEU CSS ESTILO COMPLETO (resumido por espaço) === */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f9f9f9;
-      padding: 20px;
+      background: #f9f9f9;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem 1.5rem;
       color: #333;
-      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
     }
-
     h1 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      color: #222;
-      font-weight: 600;
       text-align: center;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #007bff;
+      user-select: none;
     }
-
-    input, button {
-      font-size: 16px;
-      padding: 12px 14px;
+    #searchInput, #searchButton {
+      font-size: 1rem;
+      padding: 0.6rem 1rem;
       border-radius: 8px;
       border: 1.5px solid #ccc;
-      margin-right: 10px;
       transition: border-color 0.3s ease;
+      outline-offset: 2px;
+    }
+    #searchInput {
+      width: 70%;
+      max-width: 500px;
+      margin-right: 1rem;
       box-sizing: border-box;
     }
-
-    input:focus {
+    #searchInput::placeholder {
+      color: #aaa;
+      font-style: italic;
+    }
+    #searchInput:focus {
       border-color: #007bff;
-      box-shadow: 0 0 6px rgba(0, 123, 255, 0.4);
+      box-shadow: 0 0 8px rgba(0,123,255,0.4);
       outline: none;
     }
-
-    button {
-      background-color: #007bff;
+    #searchButton {
+      background: #007bff;
       color: white;
       border: none;
       cursor: pointer;
       font-weight: 600;
+      user-select: none;
       transition: background-color 0.3s ease;
     }
-
-    button:hover:not(:disabled) {
+    #searchButton:hover:not(:disabled) {
       background-color: #0056b3;
     }
-
-    button:disabled {
+    #searchButton:disabled {
       background-color: #aaa;
       cursor: not-allowed;
     }
-
     #results {
-      margin-top: 30px;
+      margin-top: 2rem;
     }
-
+    .sheet-title {
+      color: #007bff;
+      font-weight: 700;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      user-select: none;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.1);
       border-radius: 10px;
       overflow: hidden;
     }
-
     th, td {
-      padding: 12px 15px;
+      padding: 0.75rem 1rem;
       border-bottom: 1px solid #ddd;
       text-align: left;
+      vertical-align: middle;
     }
-
     th {
       background-color: #007bff;
       color: white;
-      font-weight: 600;
-    }
-
-    tbody tr:nth-child(odd) {
-      background-color: #f9f9f9;
-    }
-
-    tbody tr:hover {
-      background-color: #dbe9ff;
-    }
-
-    .sheet-title {
-      font-size: 1.3rem;
-      margin: 25px 0 10px;
       font-weight: 700;
-      color: #007bff;
+      user-select: none;
     }
-
-    .no-results, .error-message {
-      margin-top: 20px;
-      font-weight: 600;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    tbody tr:nth-child(odd) {
+      background: #f9f9f9;
     }
-
-    .no-results { color: #555; }
-    .error-message { color: #d9534f; }
-
-    .no-results::before { content: "ℹ️"; }
-    .error-message::before { content: "❌"; }
-
+    tbody tr:hover {
+      background: #dbe9ff;
+      transition: background-color 0.3s ease;
+    }
     .highlight {
       background-color: #fff3cd;
       font-weight: 700;
     }
-
     .loading {
       display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 700;
-      color: #007bff;
       justify-content: center;
-      margin-top: 15px;
+      align-items: center;
+      color: #007bff;
+      font-weight: 700;
+      margin-top: 1rem;
+      gap: 0.75rem;
     }
-
     .loading::before {
-      content: '';
-      width: 20px;
-      height: 20px;
+      content: "";
+      width: 22px;
+      height: 22px;
       border: 3.5px solid #007bff;
-      border-top: 3.5px solid transparent;
+      border-top-color: transparent;
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-
+    .no-results, .error-message {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      user-select: none;
+    }
+    .no-results {
+      color: #555;
+    }
+    .error-message {
+      color: #d9534f;
+    }
+    .no-results::before {
+      content: "ℹ️";
+    }
+    .error-message::before {
+      content: "❌";
+    }
     @media (max-width: 600px) {
-      body { padding: 12px; }
-      h1 { font-size: 1.4rem; }
-      input, button { width: 100%; margin: 8px 0; }
-      #results { margin-top: 20px; }
-      table, thead, tbody, th, td, tr {
-        display: block;
+      #searchInput {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 1rem;
+      }
+      #searchButton {
         width: 100%;
       }
-      thead tr { display: none; }
-      tbody tr {
-        margin-bottom: 15px;
-        border: 1px solid #ddd;
-        padding: 12px 10px;
-        border-radius: 8px;
-        background-color: #fff;
+      table, thead, tbody, th, td, tr {
+        display: block;
       }
-      tbody td {
+      thead tr {
+        display: none;
+      }
+      tbody tr {
+        margin-bottom: 1rem;
+        background: white;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      }
+      tbody tr:hover {
+        background: #e6f0ff;
+      }
+      tbody tr td {
         padding-left: 50%;
         position: relative;
         border: none;
         border-bottom: 1px solid #eee;
+        white-space: normal;
       }
-      tbody td::before {
+      tbody tr td::before {
         content: attr(data-label);
         position: absolute;
-        left: 12px;
-        top: 12px;
+        left: 1rem;
+        top: 1rem;
         font-weight: 700;
         color: #007bff;
+        white-space: nowrap;
       }
     }
   </style>
@@ -179,11 +191,11 @@
 <body>
   <h1>PESQUISAR BANCO DE DADOS SÉRGIO</h1>
 
-  <input type="text" id="searchInput" placeholder="Digite o termo para buscar..." />
-  <button id="searchButton">Pesquisar</button>
+  <input type="text" id="searchInput" placeholder="Digite o termo para buscar..." aria-label="Campo de busca" />
+  <button id="searchButton" aria-label="Botão para pesquisar">Pesquisar</button>
 
-  <div id="loadingIndicator" class="loading" style="display: none;">Pesquisando...</div>
-  <div id="results"></div>
+  <div id="loadingIndicator" class="loading" style="display:none;">Pesquisando...</div>
+  <div id="results" role="region" aria-live="polite"></div>
 
   <script>
     const searchInput = document.getElementById('searchInput');
@@ -197,8 +209,8 @@
     });
 
     function performSearch() {
-      const termo = searchInput.value.trim();
-      if (!termo) {
+      const term = searchInput.value.trim();
+      if (!term) {
         resultsDiv.innerHTML = '<p class="no-results">Por favor, digite um termo para pesquisar.</p>';
         return;
       }
@@ -207,67 +219,89 @@
       resultsDiv.innerHTML = '';
       searchButton.disabled = true;
 
-      const url = `https://script.google.com/macros/s/AKfycbxr86Bb2aksuvn-_8RnAgBUNSZ3pYeXOv0yYY2JQOuIN-FOkkTgx9u1FXic5-u5K02Y/exec?termo=${encodeURIComponent(termo)}`;
+      const url = 'https://script.google.com/macros/s/AKfycbxr86Bb2aksuvn-_8RnAgBUNSZ3pYeXOv0yYY2JQOuIN-FOkkTgx9u1FXic5-u5K02Y/exec?termo=' + encodeURIComponent(term);
 
       fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          loadingIndicator.style.display = 'none';
-          searchButton.disabled = false;
-
-          if (data.error) {
-            resultsDiv.innerHTML = `<p class="error-message">Erro: ${escapeHtml(data.error)}</p>`;
-            return;
-          }
-
-          if (data.message) {
-            resultsDiv.innerHTML = `<p class="no-results">${escapeHtml(data.message)}</p>`;
-            return;
-          }
-
-          let html = '';
-          const grouped = data.reduce((acc, item) => {
-            if (!acc[item.sheetName]) acc[item.sheetName] = [];
-            acc[item.sheetName].push(item);
-            return acc;
-          }, {});
-
-          for (const sheet in grouped) {
-            html += `<div class="sheet-title">Encontrado no Pregão: ${escapeHtml(sheet)}</div><table><thead><tr>`;
-            const colCount = grouped[sheet][0].rowData.length;
-
-            grouped[sheet][0].rowData.forEach((_, i) => {
-              const header = grouped[sheet][0].headers ? grouped[sheet][0].headers[i] : `Coluna ${i + 1}`;
-              html += `<th>${escapeHtml(header)}</th>`;
-            });
-
-            html += `</tr></thead><tbody>`;
-
-            grouped[sheet].forEach(item => {
-              html += `<tr>`;
-              item.rowData.forEach((cell, idx) => {
-                const header = item.headers ? item.headers[idx] : `Coluna ${idx + 1}`;
-                html += `<td data-label="${escapeHtml(header)}">${cell}</td>`;
-              });
-              html += `</tr>`;
-            });
-
-            html += '</tbody></table>';
-          }
-
-          resultsDiv.innerHTML = html;
+        .then(response => {
+          if (!response.ok) throw new Error('Erro na rede: ' + response.status);
+          return response.json();
         })
-        .catch(error => {
-          loadingIndicator.style.display = 'none';
-          searchButton.disabled = false;
-          resultsDiv.innerHTML = `<p class="error-message">Erro de conexão. Verifique seu link do App Script.</p>`;
-        });
+        .then(data => onSuccess(data))
+        .catch(err => onError(err));
     }
 
-    function escapeHtml(str) {
-      return str?.toString().replace(/[&<>"']/g, match => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
-      }[match])) || '';
+    function onSuccess(data) {
+      loadingIndicator.style.display = 'none';
+      searchButton.disabled = false;
+
+      if (data.error) {
+        resultsDiv.innerHTML = `<p class="error-message">Erro: ${escapeHtml(data.error)}</p>`;
+        return;
+      }
+
+      if (data.message) {
+        resultsDiv.innerHTML = `<p class="no-results">${escapeHtml(data.message)}</p>`;
+        return;
+      }
+
+      const grouped = data.reduce((acc, item) => {
+        if (!acc[item.sheetName]) acc[item.sheetName] = [];
+        acc[item.sheetName].push(item);
+        return acc;
+      }, {});
+
+      let html = '';
+
+      for (const sheet in grouped) {
+        html += `<h2 class="sheet-title">${escapeHtml(sheet)}</h2>`;
+        html += '<table><thead><tr>';
+
+        const headers = grouped[sheet][0].headers;
+        headers.forEach(header => {
+          html += `<th>${escapeHtml(header)}</th>`;
+        });
+
+        html += '</tr></thead><tbody>';
+
+        grouped[sheet].forEach(item => {
+          html += '<tr>';
+          item.rowData.forEach((cell, i) => {
+            const header = item.headers ? item.headers[i] : `Coluna ${i+1}`;
+            const cellText = highlightTerm(escapeHtml(cell.toString()), searchInput.value.trim());
+            html += `<td data-label="${escapeHtml(header)}">${cellText}</td>`;
+          });
+          html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+      }
+
+      resultsDiv.innerHTML = html;
+    }
+
+    function onError(err) {
+      loadingIndicator.style.display = 'none';
+      searchButton.disabled = false;
+      resultsDiv.innerHTML = `<p class="error-message">Erro ao buscar dados: ${escapeHtml(err.message)}</p>`;
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/[&<>"']/g, function(m) {
+        return ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        })[m];
+      });
+    }
+
+    function highlightTerm(text, term) {
+      if (!term) return text;
+      const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${escapedTerm})`, 'gi');
+      return text.replace(regex, '<span class="highlight">$1</span>');
     }
   </script>
 </body>
