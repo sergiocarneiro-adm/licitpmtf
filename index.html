@@ -16,7 +16,8 @@
   <div id="results"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz7WPUtSITwrMM16C_TlOwXtWr0jNNc6axu2bQ0w3uS2H7sCRBmqkyoHkooiUNJT07K/exec';
+    // Substitua pela URL do seu Apps Script publicado
+    const API_URL = 'https://script.google.com/macros/s/SEU_SCRIPT_ID/exec';
 
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('searchButton');
@@ -40,7 +41,10 @@
       searchButton.disabled = true;
 
       fetch(`${API_URL}?termo=${encodeURIComponent(term)}`)
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) throw new Error('Erro na resposta do servidor');
+          return response.json();
+        })
         .then(onSuccess)
         .catch(onError);
     }
@@ -94,7 +98,7 @@
     }
 
     function escapeHtml(str) {
-      return str?.toString().replace(/[&<>"']/g, match => ({
+      return str?.toString().replace(/[&<>"']/g, match => ( {
         '&': '&amp;',
         '<': '&lt;',
         '>': '&gt;',
