@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Pesquisar Dados</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link href="style.css" rel="stylesheet" />
 </head>
 <body>
   <h1>PESQUISAR BANCO DE DADOS SÉRGIO</h1>
@@ -16,7 +16,7 @@
   <div id="results"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbymzRioUCn-WWv4wzePAJUf5-qYdHQlTKHlv98ZUFFagmpRChET1ltcZ6gVG96ABghN/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwjUxYLu0e13VuaZSbYVnxwGP609JSOxv9VDKJfoenDRhq2NTL_JrVhyGHL1bODsJBF/exec';
 
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('searchButton');
@@ -40,12 +40,7 @@
       searchButton.disabled = true;
 
       fetch(`${API_URL}?termo=${encodeURIComponent(term)}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Erro na resposta do servidor');
-          }
-          return response.json();
-        })
+        .then(response => response.json())
         .then(onSuccess)
         .catch(onError);
     }
@@ -65,7 +60,6 @@
       }
 
       const term = searchInput.value.trim().toLowerCase();
-
       let html = '';
       const grouped = data.reduce((acc, item) => {
         if (!acc[item.sheetName]) acc[item.sheetName] = [];
@@ -103,7 +97,7 @@
       loadingIndicator.style.display = 'none';
       searchButton.disabled = false;
       resultsDiv.innerHTML = `<p class="error-message">Erro ao conectar com o servidor.</p>`;
-      console.error('Erro:', error);
+      console.error(error);
     }
 
     function escapeHtml(str) {
