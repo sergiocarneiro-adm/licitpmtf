@@ -3,17 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <title>Pesquisar Dados</title>
-  <!-- Fonte Inter do Google Fonts -->
+  <!-- Fonte Inter e CSS externo -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    /* (Insira aqui todo o seu CSS estiloso que já me enviou) */
-    /* Exemplo rápido do highlight: */
-    .highlight {
-      background-color: #fff3cd;
-      font-weight: 700;
-    }
-    /* ... resto do seu CSS ... */
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <h1>PESQUISAR BANCO DE DADOS SÉRGIO</h1>
@@ -46,16 +38,16 @@
       resultsDiv.innerHTML = '';
       searchButton.disabled = true;
 
-      // Substitua aqui pela URL do seu Apps Script deploy (endpoint)
-      const url = `https://script.google.com/macros/s/SEU_DEPLOY_ID/exec?termo=${encodeURIComponent(term)}`;
+      // URL do seu Web App do Apps Script — substitua pela sua real!
+      const scriptUrl = 'https://script.google.com/macros/s/SEU_DEPLOY_ID/exec?termo=' + encodeURIComponent(term);
 
-      fetch(url)
+      fetch(scriptUrl)
         .then(response => response.json())
-        .then(data => onSuccess(data, term))
+        .then(data => onSuccess(data))
         .catch(() => onError());
     }
 
-    function onSuccess(data, term) {
+    function onSuccess(data) {
       loadingIndicator.style.display = 'none';
       searchButton.disabled = false;
 
@@ -79,8 +71,8 @@
       for (const sheet in grouped) {
         html += `<div class="sheet-title">Encontrado no Pregão: ${escapeHtml(sheet)}</div><table><thead><tr>`;
 
-        // Cabeçalhos
-        grouped[sheet][0].headers.forEach(header => {
+        grouped[sheet][0].rowData.forEach((_, i) => {
+          const header = grouped[sheet][0].headers ? grouped[sheet][0].headers[i] : `Coluna ${i + 1}`;
           html += `<th>${escapeHtml(header)}</th>`;
         });
 
@@ -88,11 +80,10 @@
 
         grouped[sheet].forEach(item => {
           html += `<tr>`;
-          item.rowData.forEach(cell => {
-            // Aqui fazemos o highlight no frontend
-            const regex = new RegExp(`(${term})`, 'gi');
-            const highlighted = cell.replace(regex, '<span class="highlight">$1</span>');
-            html += `<td>${highlighted}</td>`;
+          item.rowData.forEach((cell, idx) => {
+            const header = item.headers ? item.headers[idx] : `Coluna ${idx + 1}`;
+            // Conteúdo já tem <span> para highlight vindo do Apps Script, então inserimos direto
+            html += `<td data-label="${escapeHtml(header)}">${cell}</td>`;
           });
           html += `</tr>`;
         });
@@ -110,7 +101,7 @@
     }
 
     function escapeHtml(str) {
-      return str?.toString().replace(/[&<>"']/g, match => ({
+      return str?.toString().replace(/[&<>"']/g, match => ( {
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
       }[match])) || '';
     }
