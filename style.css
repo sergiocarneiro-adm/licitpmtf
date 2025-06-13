@@ -120,7 +120,7 @@ tbody tr:hover {
 }
 
 .error-message {
-  color: #d9534f; /* bootstrap red */
+  color: #d9534f;
 }
 
 .no-results::before {
