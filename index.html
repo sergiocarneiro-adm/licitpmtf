@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Pesquisar Dados</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <h1>PESQUISAR BANCO DE DADOS SÉRGIO</h1>
@@ -39,7 +40,12 @@
       searchButton.disabled = true;
 
       fetch(`${API_URL}?termo=${encodeURIComponent(term)}`)
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Erro na resposta do servidor');
+          }
+          return response.json();
+        })
         .then(onSuccess)
         .catch(onError);
     }
@@ -58,7 +64,6 @@
         return;
       }
 
-      // Agora faz o destaque do termo no front-end
       const term = searchInput.value.trim().toLowerCase();
 
       let html = '';
@@ -81,7 +86,6 @@
         grouped[sheet].forEach(item => {
           html += `<tr>`;
           item.rowData.forEach((cell, idx) => {
-            // Destaque termo na célula
             const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
             const highlightedText = escapeHtml(cell).replace(regex, '<span class="highlight">$1</span>');
             html += `<td data-label="${escapeHtml(headers[idx])}">${highlightedText}</td>`;
@@ -99,6 +103,7 @@
       loadingIndicator.style.display = 'none';
       searchButton.disabled = false;
       resultsDiv.innerHTML = `<p class="error-message">Erro ao conectar com o servidor.</p>`;
+      console.error('Erro:', error);
     }
 
     function escapeHtml(str) {
