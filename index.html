@@ -4,7 +4,20 @@
   <meta charset="UTF-8" />
   <title>Pesquisar Dados</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* TODO: cole aqui todo o conteúdo do seu CSS */
+    /* Exemplo: */
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+      color: #333;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+    }
+    /* e todo o restante do seu CSS */
+  </style>
 </head>
 <body>
   <h1>PESQUISAR BANCO DE DADOS SÉRGIO</h1>
@@ -16,7 +29,7 @@
   <div id="results"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz7WPUtSITwrMM16C_TlOwXtWr0jNNc6axu2bQ0w3uS2H7sCRBmqkyoHkooiUNJT07K/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz7WPUtSITwrMM16C_TlOwXtWr0jNNc6axu2bQ0w3uS2H7sCRBmqkyoHkooiUNJT07K/exec'; // Atualize aqui
 
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('searchButton');
@@ -40,7 +53,10 @@
       searchButton.disabled = true;
 
       fetch(`${API_URL}?termo=${encodeURIComponent(term)}`)
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) throw new Error("Resposta inválida do servidor");
+          return response.json();
+        })
         .then(onSuccess)
         .catch(onError);
     }
@@ -87,10 +103,11 @@
       resultsDiv.innerHTML = html;
     }
 
-    function onError() {
+    function onError(error) {
       loadingIndicator.style.display = 'none';
       searchButton.disabled = false;
       resultsDiv.innerHTML = `<p class="error-message">Erro ao conectar com o servidor.</p>`;
+      console.error(error);
     }
 
     function escapeHtml(str) {
