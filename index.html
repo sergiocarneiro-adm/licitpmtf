@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Pesquisar Dados</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <link href="style.css" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" /> <!-- Seu CSS separado -->
 </head>
 <body>
   <h1>PESQUISAR BANCO DE DADOS SÉRGIO</h1>
@@ -16,7 +16,7 @@
   <div id="results"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwjUxYLu0e13VuaZSbYVnxwGP609JSOxv9VDKJfoenDRhq2NTL_JrVhyGHL1bODsJBF/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxr86Bb2aksuvn-_8RnAgBUNSZ3pYeXOv0yYY2JQOuIN-FOkkTgx9u1FXic5-u5K02Y/exec';
 
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('searchButton');
@@ -60,49 +60,46 @@
       }
 
       const term = searchInput.value.trim().toLowerCase();
+
       let html = '';
-      const grouped = data.reduce((acc, item) => {
-        if (!acc[item.sheetName]) acc[item.sheetName] = [];
-        acc[item.sheetName].push(item);
-        return acc;
-      }, {});
+      data.forEach(sheetGroup => {
+        html += `<div class="sheet-title">Encontrado no Pregão: ${escapeHtml(sheetGroup.sheetName)}</div><table><thead><tr>`;
 
-      for (const sheet in grouped) {
-        html += `<div class="sheet-title">Encontrado no Pregão: ${escapeHtml(sheet)}</div><table><thead><tr>`;
-
-        const headers = grouped[sheet][0].headers;
-        headers.forEach(header => {
+        sheetGroup.headers.forEach(header => {
           html += `<th>${escapeHtml(header)}</th>`;
         });
 
         html += `</tr></thead><tbody>`;
 
-        grouped[sheet].forEach(item => {
+        sheetGroup.rowData.forEach(row => {
           html += `<tr>`;
-          item.rowData.forEach((cell, idx) => {
+          row.forEach((cell, idx) => {
             const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
             const highlightedText = escapeHtml(cell).replace(regex, '<span class="highlight">$1</span>');
-            html += `<td data-label="${escapeHtml(headers[idx])}">${highlightedText}</td>`;
+            html += `<td data-label="${escapeHtml(sheetGroup.headers[idx])}">${highlightedText}</td>`;
           });
           html += `</tr>`;
         });
 
         html += '</tbody></table>';
-      }
+      });
 
       resultsDiv.innerHTML = html;
     }
 
-    function onError(error) {
+    function onError() {
       loadingIndicator.style.display = 'none';
       searchButton.disabled = false;
       resultsDiv.innerHTML = `<p class="error-message">Erro ao conectar com o servidor.</p>`;
-      console.error(error);
     }
 
     function escapeHtml(str) {
       return str?.toString().replace(/[&<>"']/g, match => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
       }[match])) || '';
     }
   </script>
